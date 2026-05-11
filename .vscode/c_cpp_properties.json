@@ -1,0 +1,92 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/src",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/solenoid",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/Sensors/Joystick",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/steppers",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/.pio/libdeps/uno/AccelStepper/src",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/.pio/libdeps/uno/PID",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/.pio/libdeps/uno/VL53L0X",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/.pio/libdeps/uno/VL53L1X",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/.pio/libdeps/uno/Adafruit BusIO",
+                "/Users/maximofajardo/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+                "/Users/maximofajardo/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/.pio/libdeps/uno/Adafruit Unified Sensor",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/include",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/Sensors/qtr",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/Sensors/mux",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/Sensors/IR_mux",
+                "/Users/maximofajardo/.platformio/packages/framework-arduino-avr/cores/arduino",
+                "/Users/maximofajardo/.platformio/packages/framework-arduino-avr/variants/standard",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/Sensors/limits",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/Sensors/tof",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/Sensors/ultrasonic",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/RobotMode",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/Sensors",
+                "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/rangesensor",
+                "/Users/maximofajardo/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+                "/Users/maximofajardo/.platformio/packages/framework-arduino-avr/libraries/HID/src",
+                "/Users/maximofajardo/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/src",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/solenoid",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/Sensors/Joystick",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/steppers",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/.pio/libdeps/uno/AccelStepper/src",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/.pio/libdeps/uno/PID",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/.pio/libdeps/uno/VL53L0X",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/.pio/libdeps/uno/VL53L1X",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/.pio/libdeps/uno/Adafruit BusIO",
+                    "/Users/maximofajardo/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+                    "/Users/maximofajardo/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/.pio/libdeps/uno/Adafruit Unified Sensor",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/include",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/Sensors/qtr",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/Sensors/mux",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/Sensors/IR_mux",
+                    "/Users/maximofajardo/.platformio/packages/framework-arduino-avr/cores/arduino",
+                    "/Users/maximofajardo/.platformio/packages/framework-arduino-avr/variants/standard",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/Sensors/limits",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/Sensors/tof",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/Sensors/ultrasonic",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/RobotMode",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/Sensors",
+                    "/Users/maximofajardo/Documents/PlatformIO/Projects/Portero_mega/lib/rangesensor",
+                    "/Users/maximofajardo/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+                    "/Users/maximofajardo/.platformio/packages/framework-arduino-avr/libraries/HID/src",
+                    "/Users/maximofajardo/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=60119",
+                "ARDUINO_AVR_UNO",
+                "F_CPU=16000000L",
+                "ARDUINO_ARCH_AVR",
+                "ARDUINO=10808",
+                "__AVR_ATmega328P__",
+                ""
+            ],
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++11",
+            "compilerPath": "/Users/maximofajardo/.platformio/packages/toolchain-atmelavr/bin/avr-gcc",
+            "compilerArgs": [
+                "-mmcu=atmega328p",
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}

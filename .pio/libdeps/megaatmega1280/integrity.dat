@@ -1,0 +1,7 @@
+pololu/VL53L1X
+adafruit/Adafruit BusIO
+br3ttb/PID@^1.2.1
+waspinator/AccelStepper@^1.64.0
+adafruit/Adafruit Unified Sensor
+adafruit/Adafruit BNO055
+adafruit/Adafruit TCS34725
