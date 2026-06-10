@@ -15,7 +15,7 @@ for how it's wired, how the code is organised, and the gotchas already solved.
 
 ```
             ┌─────────────────────── Raspberry Pi (Ubuntu) ───────────────────────┐
-  camera ──▶│  goalkeeper_dispatcher.py   (systemd service, OWNS the serial port)  │
+ camera ──▶│  goalkeeper_dispatcher.py   (systemd service, OWNS the serial port)   │
             │        └─ launches subprocess ─▶ vision_raw.py                        │
             │                                    prints "VISION:7F" / "VISION:FIRE" │
             │        dispatcher parses those lines ─▶ writes 1 byte ───────────────┼──▶ USB serial
@@ -115,7 +115,7 @@ whenever a limit is hit.
 ### Flashing the firmware
 Connect the Arduino **to the Mac** (it normally lives on the Pi), then:
 ```bash
-cd /Users/username/GOALKEEPER-IMS
+cd /Users/maximofajardo/GOALKEEPER-IMS
 pio run -t upload
 ```
 The CH340 may make PlatformIO auto-detect the wrong port (e.g. Bluetooth audio).
@@ -230,7 +230,7 @@ GUI tuner. They share keys; deploy a tuning session with
 Everything the Pi needs is in **`files-to-rasp/`** (the only folder you copy over).
 Full step-by-step is in `files-to-rasp/README_RASPBERRY_PI_SETUP.md`. Summary:
 
-- **User:** `username`, project dir `~/goalkeeper-vision`, IP seen as `10.xx.xxx.xx`.
+- **User:** `maximo`, project dir `~/goalkeeper-vision`, IP seen as `10.22.135.62`.
 - **Deps:** `sudo apt install -y python3-opencv python3-numpy python3-serial`.
 - **Stable port (udev):** `99-goalkeeper-serial.rules` →
   `ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523"` → `/dev/goalkeeper_serial`.
@@ -243,9 +243,9 @@ Full step-by-step is in `files-to-rasp/README_RASPBERRY_PI_SETUP.md`. Summary:
 
 ### Push updated files from the Mac
 ```bash
-cd /Users/username/GOALKEEPER-IMS
+cd /Users/maximofajardo/GOALKEEPER-IMS
 scp files-to-rasp/vision_raw.py files-to-rasp/goalkeeper_dispatcher.py \
-    files-to-rasp/config.json username@10.xx.xxx.xx:~/goalkeeper-vision/
+    files-to-rasp/config.json maximo@10.22.135.62:~/goalkeeper-vision/
 # on the Pi:
 sudo systemctl restart goalkeeper-vision.service
 ```
@@ -255,7 +255,7 @@ config once at launch).
 ### Remote desktop to the Pi
 Use **xrdp (RDP)**, not VNC. `sudo apt install -y xrdp` (already done); connect
 from the Mac with **Windows App / Microsoft Remote Desktop** to `10.xx.xxx.xx`,
-user `username`. RealVNC Viewer will **not** connect to xrdp (different protocol).
+user `maximo`. RealVNC Viewer will **not** connect to xrdp (different protocol).
 
 ---
 
