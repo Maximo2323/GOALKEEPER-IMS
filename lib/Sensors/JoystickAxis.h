@@ -7,8 +7,8 @@
 // =============================================================================
 // Strategy:
 //   - Reads the joystick every JOY_UPDATE_MS.
-//   - Inside deadband -> stops the axis (instant; there is no ramp).
-//   - Outside deadband -> commands StepperAxis::setVelocity() with a speed
+//   - Inside deadband - stops the axis (instant; there is no ramp).
+//   - Outside deadband - commands StepperAxis::setVelocity() with a speed
 //     proportional to deflection: speed = JOY_MAX_SPEED * deflection.
 //     The further the stick is pushed, the faster the stepper runs, with
 //     immediate response (the axis runs it via AccelStepper::runSpeed()).

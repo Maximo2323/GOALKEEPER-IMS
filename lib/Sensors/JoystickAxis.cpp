@@ -27,7 +27,7 @@ void JoystickAxis::update() {
     float deflection = getDeflection();    // -1..+1, exactly 0 inside deadband
 
     // -------------------------------------------------------------------------
-    // Inside deadband -> stop. Velocity mode halts instantly (no ramp), and
+    // Inside deadband - stop. Velocity mode halts instantly (no ramp), and
     // StepperAxis::stop() returns the axis to HOMED, which disables the driver.
     // -------------------------------------------------------------------------
     if (deflection == 0.0f) {
@@ -39,7 +39,7 @@ void JoystickAxis::update() {
     }
 
     // -------------------------------------------------------------------------
-    // Outside deadband -> speed proportional to deflection, pushed straight to
+    // Outside deadband - speed proportional to deflection, pushed straight to
     // the axis. setVelocity() handles enable, direction, latches and clamping.
     // -------------------------------------------------------------------------
     _wasActive = true;
