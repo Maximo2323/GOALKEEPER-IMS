@@ -73,7 +73,7 @@ private:
     unsigned long _pulseStartMs;
     unsigned long _cooldownStartMs;
 
-    // Button edge detect — same approach as your LimitSwitch class
+    // Button edge detect — fire once on a fresh press, not while held
     bool _btnPressed;
     bool _btnLastPressed;
 
