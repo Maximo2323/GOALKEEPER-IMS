@@ -13,9 +13,7 @@ JoystickAxis::JoystickAxis(uint8_t joystickPin,
       _maxSpeed(maxSpeed),
       _updateMs(updateMs),
       _lastUpdateMs(0),
-      _wasActive(false),
-      _lastDirection(0),
-      _lastIssuedSpeed(0.0f)
+      _wasActive(false)
 {}
 
 // =============================================================================
@@ -26,69 +24,27 @@ void JoystickAxis::update() {
     if (now - _lastUpdateMs < _updateMs) return;
     _lastUpdateMs = now;
 
-    float deflection = getDeflection();
+    float deflection = getDeflection();    // -1..+1, exactly 0 inside deadband
 
     // -------------------------------------------------------------------------
-    // Inside deadband: schedule decel, but don't cut power until motor stops.
-    // The motor needs coil current during deceleration to apply braking
-    // torque. Disabling immediately would let the motor coast / jerk to a
-    // halt depending on detent torque and load.
+    // Inside deadband -> stop. Velocity mode halts instantly (no ramp), and
+    // StepperAxis::stop() returns the axis to HOMED, which disables the driver.
     // -------------------------------------------------------------------------
     if (deflection == 0.0f) {
         if (_wasActive) {
-            // Tell the axis to decelerate to a stop. Do NOT disable yet.
             _axis.stop();
-            _wasActive       = false;
-            _lastDirection   = 0;
-            _lastIssuedSpeed = 0.0f;
-            // Driver will be disabled below once isMoving() returns false.
-        }
-        // Even after _wasActive flips to false, we keep watching for motion
-        // to end before cutting power. Once at rest -> disable.
-        if (!_axis.isMoving() && _axis.isEnabled()) {
-            _axis.disable();
+            _wasActive = false;
         }
         return;
     }
 
     // -------------------------------------------------------------------------
-    // Outside deadband: enable driver if needed
+    // Outside deadband -> speed proportional to deflection, pushed straight to
+    // the axis. setVelocity() handles enable, direction, latches and clamping.
     // -------------------------------------------------------------------------
-    if (!_wasActive) {
-        _axis.enable();
-        _wasActive = true;
-    }
-
-    int8_t newDir = (deflection > 0.0f) ? +1 : -1;
-    float  newSpeed = _maxSpeed * fabs(deflection);
-
-    // Direction change always requires a new moveTo() (target sign flips).
-    bool directionChanged = (newDir != _lastDirection);
-
-    // Speed change is only "significant" if it crosses a threshold. Smaller
-    // changes are absorbed silently so AccelStepper can finish ramping.
-    float speedDelta = fabs(newSpeed - _lastIssuedSpeed);
-    bool  speedChangedSignificantly =
-        (speedDelta / _maxSpeed) > JOY_SPEED_CHANGE_THRESHOLD;
-
-    if (!directionChanged && !speedChangedSignificantly) {
-        // Joystick hasn't moved enough — let AccelStepper keep doing its thing.
-        return;
-    }
-
-    // ---- Issue a new commanded move ----
-    _axis.setMaxSpeedRuntime(newSpeed);
-
-    // Generous overshoot so limit switches (not digital limits) stop motion.
-    const float overshoot = _axis.getMeasuredLengthMm() + 1000.0f;
-    if (newDir > 0) {
-        _axis.moveTo(overshoot);
-    } else {
-        _axis.moveTo(-overshoot);
-    }
-
-    _lastDirection   = newDir;
-    _lastIssuedSpeed = newSpeed;
+    _wasActive = true;
+    // Negated: physical stick left/right was reversed relative to axis travel.
+    _axis.setVelocity(-_maxSpeed * deflection);
 }
 
 // =============================================================================
