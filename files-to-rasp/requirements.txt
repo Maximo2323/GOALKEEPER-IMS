@@ -1,0 +1,12 @@
+# Python deps for vision_raw.py (Raspberry Pi).
+#
+# PREFERRED on a Pi / Ubuntu: install these from apt instead of pip — the apt
+# builds of OpenCV/NumPy are prebuilt and far more reliable than pip wheels:
+#   sudo apt install python3-opencv python3-numpy python3-serial
+#
+# This file is for the OPTIONAL virtual-env route (see the README). If you use a
+# venv, create it with --system-site-packages so it can see the apt OpenCV, or
+# let pip pull the wheels below.
+opencv-python>=4.5
+numpy>=1.21
+pyserial>=3.5
