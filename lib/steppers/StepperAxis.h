@@ -54,8 +54,9 @@ enum class AxisState {
     HOMING_TO_FAR,
     MOVE_TO_CENTER,    // also handles the implicit backoff from FAR
     HOMED,
-    RUNNING,
-    STOPPING,          // decelerating to a controlled stop (joystick released)
+    RUNNING,           // accelerated move to a position target (vision moveTo)
+    VELOCITY,          // constant-speed move (joystick); NO acceleration ramp
+    STOPPING,          // decelerating to a controlled stop (accel path only)
     FAULT
 };
 
@@ -81,6 +82,13 @@ public:
     void moveTo(float mm);
 
     void moveBy(float mm);
+
+    // Direct velocity control — NO acceleration ramp. Sign sets direction:
+    //   +steps/sec drives toward FAR, -steps/sec toward HOME, |v| < 1 stops.
+    // Used by the joystick for speed-proportional manual control: the further
+    // the stick is pushed, the larger the magnitude passed here.
+    void setVelocity(float stepsPerSec);
+
     void stop();
     void emergencyStop();
 
@@ -113,6 +121,7 @@ public:
     bool        isMoving();
     bool        isHomed()          const { return _state == AxisState::HOMED ||
                                                   _state == AxisState::RUNNING ||
+                                                  _state == AxisState::VELOCITY ||
                                                   _state == AxisState::STOPPING; }
     bool        isCalibrated()     const { return _calibrated; }
 
@@ -155,6 +164,9 @@ private:
     // breaking the acceleration profile.
     long    _zeroOffsetSteps;
 
+    // Commanded velocity (signed steps/sec) while in AxisState::VELOCITY.
+    float   _velStepsPerSec;
+
     AxisState _state;
 
     long  mmToSteps(float mm)   { return (long)(mm * _stepsPerMm); }
@@ -162,6 +174,7 @@ private:
 
     bool  _readPin(uint8_t pin) const;
     void  _setState(AxisState s);
+    void  _endVelocity();   // zero velocity; return to HOMED if in VELOCITY
 
     // Begin a homing-speed move toward home (negative direction).
     void  _startHomingToward(int8_t direction);

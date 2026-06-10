@@ -40,6 +40,7 @@ StepperAxis::StepperAxis(uint8_t stepPin, uint8_t dirPin,
       _homeLatched(false),
       _farLatched(false),
       _zeroOffsetSteps(0),
+      _velStepsPerSec(0.0f),
       _state(AxisState::UNINIT)
 {}
 
@@ -148,7 +149,7 @@ void StepperAxis::update() {
         case AxisState::MOVE_TO_CENTER:
             if (_stepper.distanceToGo() == 0) {
                 _stepper.setMaxSpeed(_maxSpeed);
-                _stepper.setAcceleration(GK_JOY_ACCELERATION);
+                _stepper.setAcceleration(GK_RUNTIME_ACCELERATION);
                 _setState(AxisState::HOMED);
                 Serial.println(F("[AXIS] Ready (HOMED at center)."));
             } else {
@@ -217,6 +218,43 @@ void StepperAxis::update() {
             }
             break;
         }
+
+        // ---------- Constant-velocity motion (joystick, NO acceleration) ----------
+        case AxisState::VELOCITY: {
+            bool movingTowardHome = (_velStepsPerSec < 0);
+            bool movingTowardFar  = (_velStepsPerSec > 0);
+
+            // HOME limit hit while heading home: hard stop, re-zero, latch.
+            if (homeLimitTriggered() && movingTowardHome) {
+                _zeroOffsetSteps = _stepper.currentPosition();
+                _stepper.setSpeed(0);
+                _velStepsPerSec = 0;
+                _homeLatched = true;
+                _farLatched  = false;
+                _setState(AxisState::HOMED);
+                Serial.println(F("[AXIS] HOME limit hit. Re-zeroed."));
+                break;
+            }
+
+            // FAR limit hit while heading far: snap to measured length, latch.
+            if (_farLimitPin != 255 && farLimitTriggered() && movingTowardFar) {
+                long curPhysical = _stepper.currentPosition() - _zeroOffsetSteps;
+                long farPhysical = (long)(_measuredLengthMm * _stepsPerMm);
+                _zeroOffsetSteps += (curPhysical - farPhysical);
+                _stepper.setSpeed(0);
+                _velStepsPerSec = 0;
+                _farLatched  = true;
+                _homeLatched = false;
+                _setState(AxisState::HOMED);
+                Serial.print(F("[AXIS] FAR limit hit. Snapped to "));
+                Serial.print(_measuredLengthMm, 1);
+                Serial.println(F(" mm."));
+                break;
+            }
+
+            _stepper.runSpeed();   // constant velocity — no accel profile
+            break;
+        }
     }
 }
 
@@ -272,11 +310,46 @@ void StepperAxis::moveBy(float mm) {
     moveTo(getPositionMm() + mm);
 }
 
+// =============================================================================
+// Direct velocity control — NO acceleration ramp (joystick manual mode)
+// =============================================================================
+void StepperAxis::setVelocity(float stepsPerSec) {
+    if (!isHomed()) return;
+
+    // Clamp magnitude to the motor ceiling.
+    if (stepsPerSec >  _maxSpeed) stepsPerSec =  _maxSpeed;
+    if (stepsPerSec < -_maxSpeed) stepsPerSec = -_maxSpeed;
+
+    // Near zero -> stop.
+    if (fabs(stepsPerSec) < 1.0f) { _endVelocity(); return; }
+
+    // Respect latches; clear the opposite latch when moving away from it.
+    if (stepsPerSec < 0.0f) {              // toward HOME
+        if (_homeLatched) { _endVelocity(); return; }
+        _farLatched = false;
+    } else {                               // toward FAR
+        if (_farLatched) { _endVelocity(); return; }
+        _homeLatched = false;
+    }
+
+    enable();                              // re-energise (HOMED auto-disables)
+    _velStepsPerSec = stepsPerSec;
+    _stepper.setSpeed(stepsPerSec);        // signed; runSpeed() uses it directly
+    _setState(AxisState::VELOCITY);
+}
+
+void StepperAxis::_endVelocity() {
+    _velStepsPerSec = 0;
+    _stepper.setSpeed(0);
+    if (_state == AxisState::VELOCITY) _setState(AxisState::HOMED);
+}
+
 void StepperAxis::stop() {
-    // Schedule a graceful decel to a stop. Enter STOPPING so update() keeps
-    // calling _stepper.run() until the motor actually comes to rest. Without
-    // this state, jumping straight to HOMED would prevent run() from being
-    // called and the motor would just truncate motion abruptly.
+    // Velocity mode stops instantly — there is no accel ramp to unwind.
+    if (_state == AxisState::VELOCITY) { _endVelocity(); return; }
+
+    // Accel (position) mode: schedule a graceful decel. Enter STOPPING so
+    // update() keeps calling _stepper.run() until the motor comes to rest.
     _stepper.stop();
     if (_state == AxisState::RUNNING) _setState(AxisState::STOPPING);
 }
@@ -322,7 +395,7 @@ void StepperAxis::setHomedPretend() {
     _stepper.setCurrentPosition(0);
     _zeroOffsetSteps = 0;
     _stepper.setMaxSpeed(_maxSpeed);
-    _stepper.setAcceleration(GK_JOY_ACCELERATION);
+    _stepper.setAcceleration(GK_RUNTIME_ACCELERATION);
     _measuredLengthMm = _axisLengthMm;
     _calibrated  = true;
     _homeLatched = false;
@@ -349,7 +422,10 @@ float StepperAxis::getTargetMm() {
     return (float)(_stepper.targetPosition()  - _zeroOffsetSteps) / _stepsPerMm;
 }
 
-bool  StepperAxis::isMoving() { return _stepper.distanceToGo() != 0; }
+bool  StepperAxis::isMoving() {
+    if (_state == AxisState::VELOCITY) return _velStepsPerSec != 0.0f;
+    return _stepper.distanceToGo() != 0;
+}
 
 bool  StepperAxis::homeLimitTriggered() { return _readPin(_homeLimitPin); }
 bool  StepperAxis::farLimitTriggered()  {
@@ -365,6 +441,7 @@ const char* StepperAxis::stateStr() const {
         case AxisState::MOVE_TO_CENTER:    return "TO_CENTER";
         case AxisState::HOMED:             return "HOMED";
         case AxisState::RUNNING:           return "RUNNING";
+        case AxisState::VELOCITY:          return "VELOCITY";
         case AxisState::STOPPING:          return "STOPPING";
         case AxisState::FAULT:             return "FAULT";
     }
