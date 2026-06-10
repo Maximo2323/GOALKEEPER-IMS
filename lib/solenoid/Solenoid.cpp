@@ -16,7 +16,7 @@ void Solenoid::begin()
     _setOutput(SOL_OFF_LEVEL);          // ALWAYS start with coil off
 
     if (_buttonPin != 255) {
-        pinMode(_buttonPin, INPUT_PULLUP);
+        pinMode(_buttonPin, INPUT);
     }
 
     _state = SolenoidState::IDLE;

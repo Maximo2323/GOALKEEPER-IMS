@@ -2,7 +2,7 @@
  * @file full-test.cpp
  * @brief Combined MANUAL + VISION test, switched live with the MODE button.
  *
- * One press of the MODE button (D5) toggles between the two modes:
+ * One press of the MODE button (D3) toggles between the two modes:
  *
  *   MANUAL  — the joystick drives the goalkeeper axis, the fire button kicks
  *             the solenoid, and the limit switches enforce end-of-travel.
@@ -16,7 +16,7 @@
  *             Pair this mode with visao/vision-tracker.py.
  *
  * Pin layout (include/pins.h):
- *   D2  FAR limit   D3  HOME limit   D4  FIRE button   D5  MODE button
+ *   D2  FAR limit   D3  HOME limit   D4  MODE button   D5  FIRE button
  *   D6  DIR   D7  STEP   D8  ENA   D9  SOL   A0  JOY
  *
  * Boot sequence:
@@ -63,7 +63,7 @@ StepperAxis goalkeeper(GK_STEP_PIN, GK_DIR_PIN, GK_LIMIT_HOME_PIN,
 JoystickAxis joystick(JOY_PIN, goalkeeper,
                       JOY_DEADBAND, JOY_MAX_SPEED, JOY_UPDATE_MS);
 
-Solenoid     kicker;   // services the fire button (D4) inside kicker.update()
+Solenoid     kicker;   // services the fire button (D2) inside kicker.update()
 
 // -----------------------------------------------------------------------------
 // Mode state
@@ -144,7 +144,7 @@ void setup() {
     pinMode(BTN_MODE_PIN, INPUT);   // external pull-down (pressed = HIGH)
 
     Serial.println(F("\n=== FULL TEST (MANUAL <-> VISION) ==="));
-    Serial.println(F("Press the MODE button (D5) to toggle modes."));
+    Serial.println(F("Press the MODE button (D3) to toggle modes."));
     Serial.println(F("Calibrating..."));
 
     goalkeeper.init();
@@ -155,7 +155,7 @@ void setup() {
 // -----------------------------------------------------------------------------
 void loop() {
     goalkeeper.update();
-    kicker.update();                // also services the fire button (D4)
+    kicker.update();                // also services the fire button (D2)
     pollModeButton();
 
     // ---- active-mode behaviour ----------------------------------------------

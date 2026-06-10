@@ -1,0 +1,25 @@
+# systemd unit — runs the DISPATCHER (which owns the serial port and launches
+# the vision subprocess). Service name stays "goalkeeper-vision" so:
+#     journalctl -u goalkeeper-vision.service -f
+#
+# Paths/user are placeholders — replace "username" with your Pi login user.
+
+[Unit]
+Description=Goalkeeper vision dispatcher (serial owner + vision subprocess)
+After=network.target
+
+[Service]
+Type=simple
+User=username
+Environment=PYTHONUNBUFFERED=1
+WorkingDirectory=/home/username/goalkeeper-vision
+ExecStart=/usr/bin/python3 /home/username/goalkeeper-vision/goalkeeper_dispatcher.py --config /home/username/goalkeeper-vision/config.json
+
+Restart=always
+RestartSec=2
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,10 @@
+# udev rule: stable name for the goalkeeper Arduino regardless of ttyUSB/ttyACM
+# numbering. Your board is a CH340 (from `lsusb`: 1a86:7523), so it enumerates
+# as /dev/ttyUSB0 (NOT ttyACM0). This rule makes it always reachable at:
+#
+#     /dev/goalkeeper_serial
+#
+# These IDs are already filled in for your board (1a86:7523). If you ever swap
+# to a different board, re-check with `lsusb` and update idVendor/idProduct.
+
+SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", SYMLINK+="goalkeeper_serial", MODE="0666"
